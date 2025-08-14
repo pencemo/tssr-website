@@ -10,6 +10,7 @@ import { Download, Calendar, BadgeIcon as IdCard } from "lucide-react"
 import { DayPicker } from "../ui/day-picker"
 import { toast } from "sonner"
 import { useDlHallTicket } from "@/hooks/useReactQuery"
+import { normalizeDobToUTC } from "../Utils/DOBConvertion"
 
 const instructions = [
     "Enter your correct Admission Number and Date of Birth in the form.",
@@ -34,8 +35,8 @@ export default function DownloadHT({setStudent}) {
       toast.error("Please fill in all required fields")
       return
     }
-
-    const data = { admissionNumber:admissionNo, dob }
+    const normalizedDob = normalizeDobToUTC(dob);
+    const data = { admissionNumber: admissionNo, dob:normalizedDob };
     
     mutate(data, {
       onSuccess: (data) => {

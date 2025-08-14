@@ -10,6 +10,7 @@ import ResultCard from "@/components/Result/ResultCard"
 import { DayPicker } from "@/components/ui/day-picker"
 import { useResultCheck } from "@/hooks/useReactQuery"
 import { toast } from "sonner"
+import { normalizeDobToUTC } from "@/components/Utils/DOBConvertion"
 
 
 export default function Result() {
@@ -29,22 +30,26 @@ export default function Result() {
         setError("Please fill all the fields")
         return
     }
-    mutate({admissionNumber:admissionNo, dob}, {
+    const normalizedDob = normalizeDobToUTC(dob)
+    mutate(
+      { admissionNumber: admissionNo, dob:normalizedDob },
+      {
         onSuccess: (data) => {
-            if(data?.success){
-                setResult(data?.data)
-                setError(null)
-                toast.success(data.message)
-            }else{
-                toast.error(data.message)
-                setError(data.message)
-            }
+          if (data?.success) {
+            setResult(data?.data);
+            setError(null);
+            toast.success(data.message);
+          } else {
+            toast.error(data.message);
+            setError(data.message);
+          }
         },
         onError: (error) => {
-            toast.error(error.message)
-            setError(error.message)
-        }
-    })
+          toast.error(error.message);
+          setError(error.message);
+        },
+      }
+    );
   }
 
   return (
